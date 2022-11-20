@@ -1265,7 +1265,6 @@ retry:
 	var responseHeader map[string]interface{}
 	if scanopts.ResponseInStdout {
 		serverResponseRaw = string(resp.Data)
-		request = string(requestDump)
 		responseHeader = normalizeHeaders(resp.Headers)
 		rawResponseHeader = resp.RawHeaders
 	}
