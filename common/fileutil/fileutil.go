@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/projectdiscovery/fileutil"
 	"github.com/projectdiscovery/httpx/common/stringz"
+	fileutil "github.com/projectdiscovery/utils/file"
 )
 
 // HasStdin determines if the user has piped input
@@ -79,4 +79,11 @@ func LoadCidrsFromSliceOrFileWithMaxRecursion(option string, splitchar string, m
 	}
 
 	return
+}
+
+func AbsPathOrDefault(p string) string {
+	if absPath, err := filepath.Abs(p); err == nil {
+		return absPath
+	}
+	return p
 }

@@ -4,15 +4,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/projectdiscovery/httputil"
 	"github.com/projectdiscovery/tlsx/pkg/tlsx/clients"
+	httputil "github.com/projectdiscovery/utils/http"
 )
 
 // Response contains the response to a server
 type Response struct {
 	StatusCode    int
 	Headers       map[string][]string
-	Data          []byte
+	RawData       []byte // undecoded data
+	Data          []byte // decoded data
 	ContentLength int
 	Raw           string
 	RawHeaders    string

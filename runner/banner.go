@@ -1,6 +1,10 @@
 package runner
 
-import "github.com/projectdiscovery/gologger"
+import (
+    "github.com/projectdiscovery/gologger"
+	updateutils "github.com/projectdiscovery/utils/update"
+)
+
 
 const banner = `
     __    __  __       _  __
@@ -8,17 +12,22 @@ const banner = `
   / __ \/ __/ __/ __ \|   /
  / / / / /_/ /_/ /_/ /   |
 /_/ /_/\__/\__/ .___/_/|_|
-             /_/              v1.2.5
+             /_/
 `
 
 // Version is the current version of httpx
-const Version = `v1.2.5`
+const version = `v1.3.1`
 
 // showBanner is used to show the banner to the user
 func showBanner() {
 	gologger.Print().Msgf("%s\n", banner)
 	gologger.Print().Msgf("\t\tprojectdiscovery.io\n\n")
+}
 
-	gologger.Print().Msgf("Use with caution. You are responsible for your actions.\n")
-	gologger.Print().Msgf("Developers assume no liability and are not responsible for any misuse or damage.\n")
+// GetUpdateCallback returns a callback function that updates httpx
+func GetUpdateCallback() func() {
+	return func() {
+		showBanner()
+		updateutils.GetUpdateToolCallback("httpx", version)()
+	}
 }

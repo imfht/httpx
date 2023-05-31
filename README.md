@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="static/httpx-logo.png" alt="httpx" width="200px"></a>
+  <img src="static/httpx-logo.png" alt="httpx" width="200px">
   <br>
 </h1>
 
@@ -24,12 +24,12 @@
 </p>
 
 
-httpx is a fast and multi-purpose HTTP toolkit that allows running multiple probes using the [retryablehttp](https://github.com/projectdiscovery/retryablehttp-go) library. It is designed to maintain result reliability with an increased number of threads.
+`httpx` is a fast and multi-purpose HTTP toolkit that allows running multiple probes using the [retryablehttp](https://github.com/projectdiscovery/retryablehttp-go) library. It is designed to maintain result reliability with an increased number of threads.
 
 # Features
 
 <h1 align="center">
-  <img src="https://user-images.githubusercontent.com/8293321/135731750-4c1d38b1-bd2a-40f9-88e9-3c4b9f6da378.png" alt="httpx" width="700px"></a>
+  <img src="https://user-images.githubusercontent.com/8293321/135731750-4c1d38b1-bd2a-40f9-88e9-3c4b9f6da378.png" alt="httpx" width="700px">
   <br>
 </h1>
 
@@ -40,7 +40,7 @@ httpx is a fast and multi-purpose HTTP toolkit that allows running multiple prob
  - Supports hosts, URLs and CIDR as input.
  - Handles edge cases doing retries, backoffs etc for handling WAFs.
 
-### Supported probes:-
+### Supported probes
 
 | Probes          | Default check | Probes         | Default check |
 |-----------------|---------------|----------------|---------------|
@@ -62,7 +62,7 @@ httpx is a fast and multi-purpose HTTP toolkit that allows running multiple prob
 
 # Installation Instructions
 
-httpx requires **go1.17** to install successfully. Run the following command to get the repo - 
+`httpx` requires **go1.19** to install successfully. Run the following command to get the repo:
 
 ```sh
 go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
@@ -109,6 +109,10 @@ PROBES:
    -cdn                  display cdn in use
    -probe                display probe status
 
+HEADLESS:
+   -ss, -screenshot  enable saving screenshot of the page using headless browser
+   -system-chrome    enable using local installed chrome for screenshot
+
 MATCHERS:
    -mc, -match-code string            match response with specified status code (-mc 200,302)
    -ml, -match-length string          match response with specified content length (-ml 100,102)
@@ -117,7 +121,7 @@ MATCHERS:
    -mfc, -match-favicon string[]      match response with specified favicon hash (-mfc 1494302000)
    -ms, -match-string string          match response with specified string (-ms admin)
    -mr, -match-regex string           match response with specified regex (-mr admin)
-   -mcdn, -match-cdn string[]         match host with specified cdn provider (fastly, incapsula, oracle, google, azure, cloudflare, cloudfront, sucuri, leaseweb, akamai)
+   -mcdn, -match-cdn string[]         match host with specified cdn provider (incapsula, oracle, google, azure, cloudflare, cloudfront, fastly, akamai, sucuri, leaseweb)
    -mrt, -match-response-time string  match response with specified response time in seconds (-mrt '< 1')
    -mdc, -match-condition string      match response with dsl expression condition
 
@@ -133,7 +137,7 @@ FILTERS:
    -ffc, -filter-favicon string[]      filter response with specified favicon hash (-mfc 1494302000)
    -fs, -filter-string string          filter response with specified string (-fs admin)
    -fe, -filter-regex string           filter response with specified regex (-fe admin)
-   -fcdn, -filter-cdn string[]         filter host with specified cdn provider (fastly, incapsula, oracle, google, azure, cloudflare, cloudfront, sucuri, leaseweb, akamai)
+   -fcdn, -filter-cdn string[]         filter host with specified cdn provider (incapsula, oracle, google, azure, cloudflare, cloudfront, fastly, akamai, sucuri, leaseweb)
    -frt, -filter-response-time string  filter response with specified response time in seconds (-frt '> 1')
    -fdc, -filter-condition string      filter response with dsl expression condition
 
@@ -154,15 +158,21 @@ MISCELLANEOUS:
    -vhost                     probe and display server supporting VHOST
    -ldv, -list-dsl-variables  list json output field keys name that support dsl matcher/filter
 
+UPDATE:
+   -up, -update                 update httpx to latest version
+   -duc, -disable-update-check  disable automatic httpx update check
+
 OUTPUT:
-   -o, -output string                file to write output results
-   -sr, -store-response              store http response to output directory
-   -srd, -store-response-dir string  store http response to custom directory
-   -csv                              store output in csv format
-   -json                             store output in JSONL(ines) format
-   -irr, -include-response           include http request/response in JSON output (-json only)
-   -include-chain                    include redirect http chain in JSON output (-json only)
-   -store-chain                      include http redirect chain in responses (-sr only)
+   -o, -output string                  file to write output results
+   -sr, -store-response                store http response to output directory
+   -srd, -store-response-dir string    store http response to custom directory
+   -csv                                store output in csv format
+   -csvo, -csv-output-encoding string  define output encoding
+   -json                               store output in JSONL(ines) format
+   -irr, -include-response             include http request/response in JSON output (-json only)
+   -irrb, -include-response-base64     include base64 encoded http request/response in JSON output (-json only)
+   -include-chain                      include redirect http chain in JSON output (-json only)
+   -store-chain                        include http redirect chain in responses (-sr only)
 
 CONFIGURATIONS:
    -r, -resolvers string[]       list of custom resolver (file or comma separated)
@@ -182,7 +192,9 @@ CONFIGURATIONS:
    -body string                  post body to include in http request
    -s, -stream                   stream mode - start elaborating input targets without sorting
    -sd, -skip-dedupe             disable dedupe input items (only used with stream mode)
-   -ldp, -leave-default-ports    leave default http/https ports in host header (eg. http://host:80 - https//host:443
+   -ldp, -leave-default-ports    leave default http/https ports in host header (eg. http://host:80 - https://host:443
+   -ztls                         use ztls library with autofallback to standard one for tls13
+   -no-decode                    avoid decoding body
 
 DEBUG:
    -health-check, -hc        run diagnostic check up
@@ -204,6 +216,7 @@ OPTIMIZATIONS:
    -ec, -exclude-cdn                  skip full port scans for CDNs (only checks for 80,443)
    -retries int                       number of retries
    -timeout int                       timeout in seconds (default 5)
+   -delay duration                    duration between each http request (eg: 200ms, 1s) (default -1ns)
    -rsts, -response-size-to-save int  max response size to save in bytes (default 2147483647)
    -rstr, -response-size-to-read int  max response size to read in bytes (default 2147483647)
 ```
@@ -241,7 +254,7 @@ https://support.hackerone.com
 
 ### File Input
 
-This will run the tool with the `probe` flag against all of the hosts in **hosts.txt** and return URLs with probed status.
+This will run the tool with the `-probe` flag against all the hosts in **hosts.txt** and return URLs with probed status.
 
 ```console
 httpx -list hosts.txt -silent -probe
@@ -467,59 +480,88 @@ https://docs.hackerone.com
 https://support.hackerone.com
 ```
 
-### Using httpx as a library
-`httpx` can be used as a library by creating an instance of the `Option` struct and populating it with the same options that would be specified via CLI. Once validated, the struct should be passed to a runner instance (to close at the end of the program) and the `RunEnumeration` method should be called. Here follows a minimal example of how to do it:
+### Screenshot
 
-```go
-package main
+Latest addition to the project, the addition of the `-screenshot` option in httpx, a powerful new feature that allows users to take screenshots of target URLs, pages, or endpoints along with the rendered DOM. This functionality enables the **visual content discovery process**, providing a comprehensive view of the target's visual appearance.
 
-import (
-	"log"
-	"os"
+Rendered DOM body is also included in json line output when `-screenshot` option is used with `-json` option.
 
-	"github.com/projectdiscovery/httpx/runner"
-)
+#### 🚩 Usage
 
-func main() {
-	inputFile := "test.txt"
-	err := os.WriteFile(inputFile, []byte("scanme.sh"), 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer os.RemoveAll(inputFile)
+To use the screenshot feature, simply add the `-screenshot` flag to your httpx command:
 
-	options := runner.Options{
-		Methods:   "GET",
-		InputFile: inputFile,
-	}
-	if err := options.ValidateOptions(); err != nil {
-		log.Fatal(err)
-	}
-
-	httpxRunner, err := runner.New(&options)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer httpxRunner.Close()
-
-	httpxRunner.RunEnumeration()
-}
+```console
+httpx -screenshot -u https://example.com
 ```
 
+🎯 Domain, Subdomain, and Path Support
+The `-screenshot` option is versatile and can be used to capture screenshots for domains, subdomains, and even specific paths when used in conjunction with the `-path` option:
+
+```console
+httpx -screenshot -u example.com
+httpx -screenshot -u https://example.com/login
+httpx -screenshot -path fuzz_path.txt -u https://example.com
+```
+
+Using with other tools:
+
+```console
+subfinder -d example.com | httpx -screenshot
+```
+
+#### 🌐 System Chrome
+
+By default, httpx will use the go-rod library to install and manage Chrome for taking screenshots. However, if you prefer to use your locally installed system Chrome, add the `-system-chrome` flag:
+
+```console
+httpx -screenshot -system-chrome -u https://example.com
+```
+
+#### 📁 Output Directory
+
+Screenshots are stored in the output/screenshot directory by default. To specify a custom output directory, use the `-srd` option:
+
+```console
+httpx -screenshot -srd /path/to/custom/directory -u https://example.com
+```
+
+#### ⏳ Performance Considerations
+
+Please note that since screenshots are captured using a headless browser, httpx runs will be slower when using the `-screenshot` option.
+
+### Using `httpx` as a library
+`httpx` can be used as a library by creating an instance of the `Option` struct and populating it with the same options that would be specified via CLI. Once validated, the struct should be passed to a runner instance (to be closed at the end of the program) and the `RunEnumeration` method should be called. A minimal example of how to do it is in the [examples](examples/) folder
 
 # Notes
 
-- As default, **httpx** checks for `HTTPS` probe and fall-back to `HTTP` only if `HTTPS` is not reachable.
-- For printing both HTTP/HTTPS results, `no-fallback` flag can be used.
+- As default, `httpx` probe with **HTTPS** scheme and fall-back to **HTTP** only if **HTTPS** is not reachable.
+- The `-no-fallback` flag can be used to probe and display both **HTTP** and **HTTPS** result.
 - Custom scheme for ports can be defined, for example `-ports http:443,http:80,https:8443`
-- `favicon`,`vhost`, `http2`, `pipeline`, `ports`, `csp-probe`, `tls-probe` and `path` are unique flag with different probes.
-- Unique flags should be used for specific use cases instead of running them as default with other probes.
-- When using `json` flag, all the information (default probes) included in the JSON output.
-- Custom resolver supports multiple protocol (**doh|tcp|udp**) in form of `protocol:resolver:port`  (eg **udp:127.0.0.1:53**)
-- Invalid custom resolvers/files are ignored.
+- Custom resolver supports multiple protocol (**doh|tcp|udp**) in form of `protocol:resolver:port` (e.g. `udp:127.0.0.1:53`)
+- The following flags should be used for specific use cases instead of running them as default with other probes:
+   - `-ports`
+   - `-path`
+   - `-vhost`
+   - `-screenshot`
+   - `-csp-probe`
+   - `-tls-probe`
+   - `-favicon`
+   - `-http2`
+   - `-pipeline`
+
 
 # Acknowledgement
 
-httpx is made with 🖤 by the [projectdiscovery](https://projectdiscovery.io) team. Community contributions have made the project what it is. See the **[Thanks.md](https://github.com/projectdiscovery/httpx/blob/master/THANKS.md)** file for more details. Do also check out these similar awesome projects that may fit in your workflow:
+Probing feature is inspired by [@tomnomnom/httprobe](https://github.com/tomnomnom/httprobe) work ❤️
 
-Probing feature is inspired by [@tomnomnom/httprobe](https://github.com/tomnomnom/httprobe) work :heart:
+
+--------
+
+<div align="center">
+
+`httpx` is made with 💙 by the [projectdiscovery](https://projectdiscovery.io) team and distributed under [MIT License](LICENSE.md).
+
+
+<a href="https://discord.gg/projectdiscovery"><img src="https://raw.githubusercontent.com/projectdiscovery/nuclei-burp-plugin/main/static/join-discord.png" width="300" alt="Join Discord"></a>
+
+</div>

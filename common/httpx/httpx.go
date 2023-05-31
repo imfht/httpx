@@ -9,17 +9,16 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode/utf8"
 
 	"github.com/corpix/uarand"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/projectdiscovery/cdncheck"
 	"github.com/projectdiscovery/fastdialer/fastdialer"
-	"github.com/projectdiscovery/gologger"
-	pdhttputil "github.com/projectdiscovery/httputil"
 	"github.com/projectdiscovery/rawhttp"
 	retryablehttp "github.com/projectdiscovery/retryablehttp-go"
-	"github.com/projectdiscovery/stringsutil"
+	pdhttputil "github.com/projectdiscovery/utils/http"
+	stringsutil "github.com/projectdiscovery/utils/strings"
+	urlutil "github.com/projectdiscovery/utils/url"
 	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
 )
@@ -44,6 +43,7 @@ func New(options *Options) (*HTTPX, error) {
 	fastdialerOpts.Deny = options.Deny
 	fastdialerOpts.Allow = options.Allow
 	fastdialerOpts.WithDialerHistory = true
+	fastdialerOpts.WithZTLS = options.ZTLS
 	if len(options.Resolvers) > 0 {
 		fastdialerOpts.BaseResolvers = options.Resolvers
 	}
@@ -103,9 +103,9 @@ func New(options *Options) (*HTTPX, error) {
 			return nil
 		}
 	}
-
 	transport := &http.Transport{
 		DialContext:         httpx.Dialer.Dial,
+		DialTLSContext:      httpx.Dialer.DialTLS,
 		MaxIdleConnsPerHost: -1,
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true,
@@ -150,10 +150,7 @@ func New(options *Options) (*HTTPX, error) {
 	httpx.htmlPolicy = bluemonday.NewPolicy()
 	httpx.CustomHeaders = httpx.Options.CustomHeaders
 	if options.CdnCheck || options.ExcludeCdn {
-		httpx.cdn, err = cdncheck.NewWithCache()
-		if err != nil {
-			gologger.Error().Msgf("could not create cdn check: %v", err)
-		}
+		httpx.cdn = cdncheck.New()
 	}
 
 	return httpx, nil
@@ -217,6 +214,10 @@ get_response:
 		return nil, closeErr
 	}
 
+	// Todo: replace with https://github.com/projectdiscovery/utils/issues/110
+	resp.RawData = make([]byte, len(respbody))
+	copy(resp.RawData, respbody)
+
 	respbody, err = DecodeData(respbody, httpresp.Header)
 	if err != nil && !shouldIgnoreBodyErrors {
 		return nil, closeErr
@@ -232,14 +233,14 @@ get_response:
 	// if content length is not defined
 	if resp.ContentLength <= 0 {
 		// check if it's in the header and convert to int
-		if contentLength, ok := resp.Headers["Content-Length"]; ok {
-			contentLengthInt, _ := strconv.Atoi(strings.Join(contentLength, ""))
+		if contentLength, ok := resp.Headers["Content-Length"]; ok && len(contentLength) > 0 {
+			contentLengthInt, _ := strconv.Atoi(contentLength[0])
 			resp.ContentLength = contentLengthInt
 		}
 
 		// if we have a body, then use the number of bytes in the body if the length is still zero
-		if resp.ContentLength <= 0 && len(respbodystr) > 0 {
-			resp.ContentLength = utf8.RuneCountInString(respbodystr)
+		if resp.ContentLength <= 0 && len(respbody) > 0 {
+			resp.ContentLength = len(respbody)
 		}
 	}
 
@@ -330,11 +331,15 @@ func (h *HTTPX) NewRequest(method, targetURL string) (req *retryablehttp.Request
 
 // NewRequest from url
 func (h *HTTPX) NewRequestWithContext(ctx context.Context, method, targetURL string) (req *retryablehttp.Request, err error) {
-	req, err = retryablehttp.NewRequestWithContext(ctx, method, targetURL, nil)
+	urlx, err := urlutil.ParseURL(targetURL, h.Options.Unsafe)
 	if err != nil {
-		return
+		return nil, err
 	}
 
+	req, err = retryablehttp.NewRequestFromURLWithContext(ctx, method, urlx, nil)
+	if err != nil {
+		return nil, err
+	}
 	// Skip if unsafe is used
 	if !h.Options.Unsafe {
 		// set default user agent

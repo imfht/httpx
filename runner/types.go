@@ -8,8 +8,8 @@ import (
 	"github.com/bxcodec/faker/v4/pkg/options"
 	"github.com/mitchellh/mapstructure"
 	"github.com/projectdiscovery/httpx/common/httpx"
-	"github.com/projectdiscovery/mapsutil"
 	"github.com/projectdiscovery/tlsx/pkg/tlsx/clients"
+	mapsutil "github.com/projectdiscovery/utils/maps"
 )
 
 type AsnResponse struct {
@@ -25,20 +25,20 @@ func (o AsnResponse) String() string {
 
 // Result of a scan
 type Result struct {
-	Timestamp          time.Time    `json:"timestamp,omitempty" csv:"timestamp"`
-	ASN                *AsnResponse `json:"asn,omitempty" csv:"asn"`
-	err                error
+	Timestamp          time.Time              `json:"timestamp,omitempty" csv:"timestamp"`
+	ASN                *AsnResponse           `json:"asn,omitempty" csv:"asn"`
+	Err                error                  `json:"-" csv:"-"`
 	CSPData            *httpx.CSPData         `json:"csp,omitempty" csv:"csp"`
 	TLSData            *clients.Response      `json:"tls,omitempty" csv:"tls"`
 	Hashes             map[string]interface{} `json:"hash,omitempty" csv:"hash"`
 	ExtractRegex       []string               `json:"extract_regex,omitempty" csv:"extract_regex"`
 	CDNName            string                 `json:"cdn_name,omitempty" csv:"cdn_name"`
 	Port               string                 `json:"port,omitempty" csv:"port"`
-	raw                string
-	URL                string `json:"url,omitempty" csv:"url"`
-	Input              string `json:"input,omitempty" csv:"input"`
-	Location           string `json:"location,omitempty" csv:"location"`
-	Title              string `json:"title,omitempty" csv:"title"`
+	Raw                string                 `json:"-" csv:"-"`
+	URL                string                 `json:"url,omitempty" csv:"url"`
+	Input              string                 `json:"input,omitempty" csv:"input"`
+	Location           string                 `json:"location,omitempty" csv:"location"`
+	Title              string                 `json:"title,omitempty" csv:"title"`
 	str                string
 	Scheme             string                 `json:"scheme,omitempty" csv:"scheme"`
 	Error              string                 `json:"error,omitempty" csv:"error"`
@@ -49,6 +49,7 @@ type Result struct {
 	Host               string                 `json:"host,omitempty" csv:"host"`
 	Path               string                 `json:"path,omitempty" csv:"path"`
 	FavIconMMH3        string                 `json:"favicon,omitempty" csv:"favicon"`
+	FaviconPath        string                 `json:"favicon_path,omitempty" csv:"favicon_path"`
 	FinalURL           string                 `json:"final_url,omitempty" csv:"final_url"`
 	ResponseHeader     map[string]interface{} `json:"header,omitempty" csv:"header"`
 	RawHeader          string                 `json:"raw_header,omitempty" csv:"raw_header"`
@@ -71,13 +72,16 @@ type Result struct {
 	CDN                bool                   `json:"cdn,omitempty" csv:"cdn"`
 	HTTP2              bool                   `json:"http2,omitempty" csv:"http2"`
 	Pipeline           bool                   `json:"pipeline,omitempty" csv:"pipeline"`
+	HeadlessBody       string                 `json:"headless_body,omitempty" csv:"headless_body"`
+	ScreenshotBytes    []byte                 `json:"screenshot_bytes,omitempty" csv:"screenshot_bytes"`
 	StoredResponsePath string                 `json:"stored_response_path,omitempty" csv:"stored_response_path"`
+	ScreenshotPath     string                 `json:"screenshot_path,omitempty" csv:"screenshot_path"`
 }
 
 // function to get dsl variables from result struct
 func dslVariables() ([]string, error) {
 	fakeResult := Result{}
-	fieldsToIgnore := []string{"Hashes", "ResponseHeader"}
+	fieldsToIgnore := []string{"Hashes", "ResponseHeader", "Err"}
 	if err := faker.FakeData(&fakeResult, options.WithFieldsToIgnore(fieldsToIgnore...)); err != nil {
 		return nil, err
 	}
