@@ -110,8 +110,9 @@ PROBES:
    -probe                display probe status
 
 HEADLESS:
-   -ss, -screenshot  enable saving screenshot of the page using headless browser
-   -system-chrome    enable using local installed chrome for screenshot
+   -ss, -screenshot            enable saving screenshot of the page using headless browser
+   -ssf, -screenshot-fullpage  enable saving screenshot for full page (default true)
+   -system-chrome              enable using local installed chrome for screenshot
 
 MATCHERS:
    -mc, -match-code string            match response with specified status code (-mc 200,302)
@@ -121,7 +122,7 @@ MATCHERS:
    -mfc, -match-favicon string[]      match response with specified favicon hash (-mfc 1494302000)
    -ms, -match-string string          match response with specified string (-ms admin)
    -mr, -match-regex string           match response with specified regex (-mr admin)
-   -mcdn, -match-cdn string[]         match host with specified cdn provider (incapsula, oracle, google, azure, cloudflare, cloudfront, fastly, akamai, sucuri, leaseweb)
+   -mcdn, -match-cdn string[]         match host with specified cdn provider (cloudfront, fastly, google, leaseweb)
    -mrt, -match-response-time string  match response with specified response time in seconds (-mrt '< 1')
    -mdc, -match-condition string      match response with dsl expression condition
 
@@ -137,7 +138,7 @@ FILTERS:
    -ffc, -filter-favicon string[]      filter response with specified favicon hash (-mfc 1494302000)
    -fs, -filter-string string          filter response with specified string (-fs admin)
    -fe, -filter-regex string           filter response with specified regex (-fe admin)
-   -fcdn, -filter-cdn string[]         filter host with specified cdn provider (incapsula, oracle, google, azure, cloudflare, cloudfront, fastly, akamai, sucuri, leaseweb)
+   -fcdn, -filter-cdn string[]         filter host with specified cdn provider (cloudfront, fastly, google, leaseweb)
    -frt, -filter-response-time string  filter response with specified response time in seconds (-frt '> 1')
    -fdc, -filter-condition string      filter response with dsl expression condition
 
@@ -169,7 +170,8 @@ OUTPUT:
    -csv                                store output in csv format
    -csvo, -csv-output-encoding string  define output encoding
    -json                               store output in JSONL(ines) format
-   -irr, -include-response             include http request/response in JSON output (-json only)
+   -irr, -include-response             include http response in JSON output (-json only)
+   -irreq, -include-request            include http request in JSON output (-json only)
    -irrb, -include-response-base64     include base64 encoded http request/response in JSON output (-json only)
    -include-chain                      include redirect http chain in JSON output (-json only)
    -store-chain                        include http redirect chain in responses (-sr only)
@@ -215,7 +217,7 @@ OPTIMIZATIONS:
    -maxhr, -max-host-error int        max error count per host before skipping remaining path/s (default 30)
    -ec, -exclude-cdn                  skip full port scans for CDNs (only checks for 80,443)
    -retries int                       number of retries
-   -timeout int                       timeout in seconds (default 5)
+   -timeout int                       timeout in seconds (default 10)
    -delay duration                    duration between each http request (eg: 200ms, 1s) (default -1ns)
    -rsts, -response-size-to-save int  max response size to save in bytes (default 2147483647)
    -rstr, -response-size-to-read int  max response size to read in bytes (default 2147483647)

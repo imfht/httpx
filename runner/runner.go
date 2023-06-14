@@ -218,6 +218,7 @@ func New(options *Options) (*Runner, error) {
 	scanopts.OutputServerHeader = options.OutputServerHeader
 	scanopts.OutputWithNoColor = options.NoColor
 	scanopts.ResponseInStdout = options.responseInStdout
+	scanopts.RequestInStdout = options.requestInStdout
 	scanopts.Base64ResponseInStdout = options.base64responseInStdout
 	scanopts.ChainInStdout = options.chainInStdout
 	scanopts.OutputWebSocket = options.OutputWebSocket
@@ -252,6 +253,7 @@ func New(options *Options) (*Runner, error) {
 		runner.browser = browser
 	}
 	scanopts.Screenshot = options.Screenshot
+	scanopts.ScreenshotFullPage = options.ScreenshotFullPage
 	scanopts.UseInstalledChrome = options.UseInstalledChrome
 
 	if options.OutputExtractRegexs != nil {
@@ -1691,7 +1693,7 @@ retry:
 	if scanopts.Screenshot {
 		screenshotPath = fileutilz.AbsPathOrDefault(filepath.Join(screenshotBaseDir, screenshotResponseFile))
 		var err error
-		screenshotBytes, headlessBody, err = r.browser.ScreenshotWithBody(fullURL, r.hp.Options.Timeout)
+		screenshotBytes, headlessBody, err = r.browser.ScreenshotWithBody(fullURL, r.hp.Options.Timeout, scanopts.ScreenshotFullPage)
 		if err != nil {
 			gologger.Warning().Msgf("Could not take screenshot '%s': %s", fullURL, err)
 		} else {

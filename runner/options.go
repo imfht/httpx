@@ -53,6 +53,7 @@ type ScanOptions struct {
 	OutputWithNoColor         bool
 	OutputMethod              bool
 	ResponseInStdout          bool
+	RequestInStdout           bool
 	Base64ResponseInStdout    bool
 	ChainInStdout             bool
 	TLSProbe                  bool
@@ -84,6 +85,7 @@ type ScanOptions struct {
 	OutputWordsCount          bool
 	Hashes                    string
 	Screenshot                bool
+	ScreenshotFullPage        bool
 	UseInstalledChrome        bool
 }
 
@@ -132,6 +134,7 @@ func (s *ScanOptions) Clone() *ScanOptions {
 		OutputWordsCount:          s.OutputWordsCount,
 		Hashes:                    s.Hashes,
 		Screenshot:                s.Screenshot,
+		ScreenshotFullPage:        s.ScreenshotFullPage,
 		UseInstalledChrome:        s.UseInstalledChrome,
 	}
 }
@@ -190,6 +193,7 @@ type Options struct {
 	OutputServerHeader        bool
 	OutputWebSocket           bool
 	responseInStdout          bool
+	requestInStdout           bool
 	base64responseInStdout    bool
 	chainInStdout             bool
 	FollowHostRedirects       bool
@@ -266,6 +270,7 @@ type Options struct {
 	DisableUpdateCheck        bool
 	NoDecode                  bool
 	Screenshot                bool
+	ScreenshotFullPage        bool
 	UseInstalledChrome        bool
 }
 
@@ -307,6 +312,7 @@ func ParseOptions() *Options {
 
 	flagSet.CreateGroup("headless", "Headless",
 		flagSet.BoolVarP(&options.Screenshot, "screenshot", "ss", false, "enable saving screenshot of the page using headless browser"),
+		flagSet.BoolVarP(&options.ScreenshotFullPage, "screenshot-fullpage", "ssf", true, "enable saving screenshot for full page"),
 		flagSet.BoolVar(&options.UseInstalledChrome, "system-chrome", false, "enable using local installed chrome for screenshot"),
 	)
 
@@ -372,7 +378,8 @@ func ParseOptions() *Options {
 		flagSet.BoolVar(&options.CSVOutput, "csv", false, "store output in csv format"),
 		flagSet.StringVarP(&options.CSVOutputEncoding, "csv-output-encoding", "csvo", "", "define output encoding"),
 		flagSet.BoolVar(&options.JSONOutput, "json", false, "store output in JSONL(ines) format"),
-		flagSet.BoolVarP(&options.responseInStdout, "include-response", "irr", false, "include http request/response in JSON output (-json only)"),
+		flagSet.BoolVarP(&options.responseInStdout, "include-response", "irr", false, "include http response in JSON output (-json only)"),
+		flagSet.BoolVarP(&options.requestInStdout, "include-request", "irreq", false, "include http request in JSON output (-json only)"),
 		flagSet.BoolVarP(&options.base64responseInStdout, "include-response-base64", "irrb", false, "include base64 encoded http request/response in JSON output (-json only)"),
 		flagSet.BoolVar(&options.chainInStdout, "include-chain", false, "include redirect http chain in JSON output (-json only)"),
 		flagSet.BoolVar(&options.StoreChain, "store-chain", false, "include http redirect chain in responses (-sr only)"),
