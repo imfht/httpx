@@ -312,7 +312,7 @@ func ParseOptions() *Options {
 
 	flagSet.CreateGroup("headless", "Headless",
 		flagSet.BoolVarP(&options.Screenshot, "screenshot", "ss", false, "enable saving screenshot of the page using headless browser"),
-		flagSet.BoolVarP(&options.ScreenshotFullPage, "screenshot-fullpage", "ssf", true, "enable saving screenshot for full page"),
+		flagSet.BoolVarP(&options.ScreenshotFullPage, "screenshot-fullpage", "ssf", false, "enable saving screenshot for full page"),
 		flagSet.BoolVar(&options.UseInstalledChrome, "system-chrome", false, "enable using local installed chrome for screenshot"),
 	)
 

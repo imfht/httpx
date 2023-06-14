@@ -111,7 +111,7 @@ PROBES:
 
 HEADLESS:
    -ss, -screenshot            enable saving screenshot of the page using headless browser
-   -ssf, -screenshot-fullpage  enable saving screenshot for full page (default true)
+   -ssf, -screenshot-fullpage  enable saving screenshot for full page (default false)
    -system-chrome              enable using local installed chrome for screenshot
 
 MATCHERS:
